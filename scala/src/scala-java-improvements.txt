@@ -1,0 +1,10 @@
+uniform invocation principle a.toString
+override
+a == b (equals)
+Null, Nothing - common subclasses
+pattern matching
+string interpolation
+traits: rich interfaces + stackable-modifications
+private[this]
+Array[Int] - int[] ?
+contraposition
