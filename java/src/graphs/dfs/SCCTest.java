@@ -12,11 +12,10 @@ public class SCCTest {
 			List<Integer>[] g = getRandomGraph(n, rnd);
 
 			Set<Set> s1 = SCCTransitiveClosure.scc(g).stream().map(HashSet::new).collect(Collectors.toSet());
-			Set<Set> s2 = SCCKosaraju.scc(g).stream().map(HashSet::new).collect(Collectors.toSet());
-			Set<Set> s3 = new SCCTarjan().scc(g).stream().map(HashSet::new).collect(Collectors.toSet());
-			Set<Set> s4 = SCCTarjanNoRecursion.scc(g).stream().map(HashSet::new).collect(Collectors.toSet());
+			Set<Set> s2 = new SCCTarjan().scc(g).stream().map(HashSet::new).collect(Collectors.toSet());
+			Set<Set> s3 = SCCTarjanNoRecursion.scc(g).stream().map(HashSet::new).collect(Collectors.toSet());
 
-			if (!s1.equals(s2) || !s1.equals(s3) || !s1.equals(s4))
+			if (!s1.equals(s2) || !s1.equals(s3))
 				throw new RuntimeException();
 		}
 	}
