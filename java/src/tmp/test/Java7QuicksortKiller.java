@@ -269,7 +269,7 @@ public class Java7QuicksortKiller implements Runnable {
     }
 
     public void run() {
-        int n = 60_000;
+        int n = 100_000;
 
         int[] a = new int[n];
         int[] p = new int[n];
