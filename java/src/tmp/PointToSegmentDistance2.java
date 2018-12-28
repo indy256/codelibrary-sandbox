@@ -1,3 +1,4 @@
+package tmp;
 public class PointToSegmentDistance2 {
 
 	public static double pointToSegmentDistance(Point p, Point a, Point b) {

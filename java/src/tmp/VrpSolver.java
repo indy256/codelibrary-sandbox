@@ -1,3 +1,4 @@
+package tmp;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;

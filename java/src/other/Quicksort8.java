@@ -1,4 +1,4 @@
-package experimental;
+package other;
 
 import java.util.*;
 import java.util.stream.Collectors;

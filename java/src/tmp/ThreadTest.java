@@ -1,3 +1,4 @@
+package tmp;
 public class ThreadTest {
 	public static void main(String[] args) throws InterruptedException {
 		Thread t = new Thread(() -> {

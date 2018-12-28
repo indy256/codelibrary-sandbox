@@ -1,3 +1,5 @@
+package other;
+
 public class AntiHashGenerator {
 	public static void main(String[] args) {
 		StringBuilder sb = new StringBuilder();

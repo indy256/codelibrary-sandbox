@@ -1,4 +1,4 @@
-package obsolete.trees;
+package structures;
 public class SegmentTreeSetPosition {
 	int[] zeros;
 	int n;

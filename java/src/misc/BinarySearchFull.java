@@ -1,4 +1,4 @@
-package experimental;
+package misc;
 
 import java.util.Arrays;
 import java.util.function.DoublePredicate;

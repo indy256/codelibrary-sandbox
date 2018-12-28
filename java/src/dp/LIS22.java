@@ -1,8 +1,8 @@
-package obsolete;
+package dp;
 
 import java.util.*;
 
-public class LIS21 {
+public class LIS22 {
 
 	static int upper_bound(int[] a, int key) {
 		int lo = -1;

@@ -1,4 +1,4 @@
-package obsolete.trees;
+package structures;
 public class SegmentTreeFastIntervalSetMax {
 	int n;
 	int[] t;

@@ -1,3 +1,4 @@
+package structures;
 import java.util.*;
 
 public class KdTreePointQuery4 {
@@ -14,7 +15,7 @@ public class KdTreePointQuery4 {
 	int[] tx;
 	int[] ty;
 
-	public KdTreePointQuery2(Point[] points) {
+	public KdTreePointQuery4(Point[] points) {
 		int n = points.length;
 		tx = new int[n];
 		ty = new int[n];

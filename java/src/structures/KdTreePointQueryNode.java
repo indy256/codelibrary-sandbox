@@ -1,4 +1,4 @@
-package obsolete;
+package structures;
 import java.util.*;
 
 public class KdTreePointQueryNode {

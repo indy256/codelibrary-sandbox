@@ -1,4 +1,4 @@
-package obsolete;
+package graphs.spanningtree;
 
 import java.util.*;
 

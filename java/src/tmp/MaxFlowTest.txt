@@ -1,4 +1,7 @@
-import experimental.MaxFlowDinicLinkCut;
+package tmp;
+import graphs.flows.MaxFlowDinic2;
+import graphs.flows.MaxFlowDinicLinkCut;
+import graphs.flows.MaxFlowRetreat;
 
 import java.util.List;
 import java.util.Random;
@@ -19,7 +22,7 @@ public class MaxFlowTest {
 //			System.out.println("starting");
 
 //			final List<MaxFlowDinic2.Edge>[] g0 = MaxFlowDinic2.createGraph(V);
-			final List<MaxFlowDinic.Edge>[] g1 = MaxFlowDinic.createGraph(V);
+			final List<MaxFlowDinic2.Edge>[] g1 = MaxFlowDinic2.createGraph(V);
 //			f2.init(V);
 //			f3.init(V);
 			final List<MaxFlowRetreat.Edge>[] g4 = MaxFlowRetreat.createGraph(V);
@@ -32,7 +35,7 @@ public class MaxFlowTest {
 				for (int j : g[i]) {
 					int cap = rnd.nextInt(100);
 //					MaxFlowDinic2.addEdge(g0, i, j, cap);
-					MaxFlowDinic.addEdge(g1, i, j, cap);
+					MaxFlowDinic2.addEdge(g1, i, j, cap);
 //					f2.addEdge(i, j, cap);
 //					f3.addEdge(i, j, cap);
 					if (cap > 0)
@@ -51,7 +54,7 @@ public class MaxFlowTest {
 //			System.out.println(System.currentTimeMillis() - time);
 
 			time = System.currentTimeMillis();
-			int flow1 = MaxFlowDinic.maxFlow(g1, 0, V - 1);
+			int flow1 = MaxFlowDinic2.maxFlow(g1, 0, V - 1);
 //			System.out.println(System.currentTimeMillis() - time);
 
 			time = System.currentTimeMillis();

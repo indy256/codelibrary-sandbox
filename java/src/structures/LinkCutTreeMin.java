@@ -1,4 +1,4 @@
-package experimental;
+package structures;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,18 +7,18 @@ import java.util.Random;
 public class LinkCutTreeMin {
 
 	public static class Node {
-		Node left;
-		Node right;
-		Node parent;
+		public Node left;
+		public Node right;
+		public Node parent;
 
-		int id;
-		int minId;
-		long value;
-		long delta;
-		long min;
+		public int id;
+		public int minId;
+		public long value;
+		public long delta;
+		public long min;
 
-		Object o;
-		long savedValue;
+		public Object o;
+		public long savedValue;
 
 		void update() {
 			min = value;
@@ -101,7 +101,7 @@ public class LinkCutTreeMin {
 	}
 
 	// Makes node x the root of the virtual tree, and also x is the leftmost node in its splay tree
-	static Node expose(Node x) {
+	public static Node expose(Node x) {
 		Node last = null;
 		for (Node y = x; y != null; y = y.parent) {
 			splay(y);

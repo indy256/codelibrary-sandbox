@@ -1,3 +1,4 @@
+package tmp;
 public class Z {
 	static abstract class NumberIterator {
 		protected final long base;

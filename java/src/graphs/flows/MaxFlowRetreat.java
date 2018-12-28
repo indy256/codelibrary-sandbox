@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 public class MaxFlowRetreat {
 
-	static class Edge {
+	public static class Edge {
 		int s, t, rev, cap, f;
 
 		public Edge(int s, int t, int rev, int cap) {

@@ -1,3 +1,4 @@
+package tmp;
 public class SinusExtractor {
 
 	static class Sinus {

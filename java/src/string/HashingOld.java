@@ -1,4 +1,4 @@
-package obsolete;
+package string;
 
 public class HashingOld {
 

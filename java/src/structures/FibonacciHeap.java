@@ -1,4 +1,4 @@
-package sandbox;
+package structures;
 
 import java.util.*;
 

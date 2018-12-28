@@ -1,4 +1,4 @@
-package experimental;
+package structures;
 public class SegmentTreeAddZeroCount {
 	int[] add;
 	int[] minCount;

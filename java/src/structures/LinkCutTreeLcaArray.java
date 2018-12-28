@@ -1,4 +1,4 @@
-package experimental;
+package structures;
 
 public class LinkCutTreeLcaArray {
 	static int[] left;

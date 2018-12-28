@@ -1,15 +1,15 @@
-package experimental;
+package structures;
 
 public class TreeForestValue {
 
 	public static class Node {
-		Node parent;
-		int value;
-		int savedValue;
-		int id;
-		Object o;
+		public Node parent;
+		public int value;
+		public int savedValue;
+		public int id;
+		public Object o;
 
-		Node(int id, int value) {
+		public Node(int id, int value) {
 			this.id = id;
 			this.value = value;
 		}

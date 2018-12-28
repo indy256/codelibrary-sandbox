@@ -1,4 +1,4 @@
-package obsolete.trees;
+package structures;
 public class SegmentTree2DSetMax {
 	int[][] t;
 	int n, m;

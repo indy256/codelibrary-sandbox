@@ -1,4 +1,4 @@
-package obsolete;
+package graphs.flows;
 import java.util.*;
 
 public class MaxFlowDinicArrayGraph {

@@ -1,4 +1,4 @@
-package obsolete.trees;
+package structures;
 public class SegmentTreeFastIntervalAddSum {
 	int n;
 	int[] t;

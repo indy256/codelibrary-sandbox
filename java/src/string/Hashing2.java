@@ -1,4 +1,4 @@
-package obsolete;
+package string;
 
 import java.math.BigInteger;
 import java.util.*;

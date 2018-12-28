@@ -1,4 +1,5 @@
-package test;/*
+package tmp.test;
+/*
  * Problem, java?
  */
 

@@ -1,4 +1,4 @@
-package experimental;
+package other;
 
 public class PlanarityTesting {
 

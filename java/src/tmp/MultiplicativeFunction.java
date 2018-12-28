@@ -1,3 +1,4 @@
+package tmp;
 public abstract class MultiplicativeFunction {
 	public static final MultiplicativeFunction DIVISOR_COUNT = new MultiplicativeFunction() {
 		@Override

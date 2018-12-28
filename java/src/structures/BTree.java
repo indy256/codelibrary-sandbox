@@ -1,4 +1,4 @@
-package sandbox;
+package structures;
 
 // M is even and M >= 4
 public class BTree<Key extends Comparable<Key>, Value> {

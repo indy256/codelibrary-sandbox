@@ -1,4 +1,4 @@
-package obsolete.trees;
+package structures;
 import java.util.Arrays;
 
 public class SegmentTreeIntervalFillSum {

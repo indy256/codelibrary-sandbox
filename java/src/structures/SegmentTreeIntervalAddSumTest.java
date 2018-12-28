@@ -1,4 +1,4 @@
-package obsolete.trees;
+package structures;
 import java.util.Random;
 
 public class SegmentTreeIntervalAddSumTest {

@@ -1,3 +1,4 @@
+package structures;
 import java.util.*;
 
 public class RTreeTest {

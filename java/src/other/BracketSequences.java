@@ -1,3 +1,5 @@
+package other;
+
 public class BracketSequences {
 
 	public static boolean nextBracketSequence(char[] s) {

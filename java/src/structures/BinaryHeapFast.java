@@ -1,4 +1,4 @@
-package experimental;
+package structures;
 
 import java.util.*;
 

@@ -1,3 +1,5 @@
+package numeric;
+
 public class FFTTest {
 	public static void main(String[] args) {
 //		double[] a = {-10.6, 0.1, 0.2, -1.04, 0.18, -0.6};

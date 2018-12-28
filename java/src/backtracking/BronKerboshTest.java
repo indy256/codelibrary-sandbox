@@ -1,4 +1,4 @@
-package obsolete;
+package backtracking;
 
 import java.util.*;
 

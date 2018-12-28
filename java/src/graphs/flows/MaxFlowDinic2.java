@@ -1,4 +1,4 @@
-package experimental;
+package graphs.flows;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -6,7 +6,7 @@ import java.util.List;
 
 public class MaxFlowDinic2 {
 
-	static class Edge {
+	public static class Edge {
 		int t, rev, cap, f;
 
 		public Edge(int t, int rev, int cap) {

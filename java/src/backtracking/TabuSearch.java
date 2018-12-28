@@ -1,4 +1,4 @@
-package experimental;
+package backtracking;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;

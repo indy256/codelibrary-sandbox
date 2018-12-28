@@ -1,4 +1,4 @@
-package experimental;
+package other;
 
 import java.util.Random;
 

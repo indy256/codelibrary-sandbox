@@ -48,7 +48,7 @@
  *      nf      01/06/02        Removed all synchronization
  *
  */
-package experimental;
+package structures;
 
 import java.util.*;
 
@@ -76,7 +76,7 @@ import java.util.*;
  *
  * @author Nathan Fiedler
  */
-public class FibonacciHeap<T>
+public class FibonacciHeap2<T>
 {
     //~ Static fields/initializers ---------------------------------------------
 
@@ -100,7 +100,7 @@ public class FibonacciHeap<T>
     /**
      * Constructs a FibonacciHeap object that contains no elements.
      */
-    public FibonacciHeap()
+    public FibonacciHeap2()
     {
     } // FibonacciHeap
 
@@ -319,11 +319,11 @@ public class FibonacciHeap<T>
      *
      * @return new heap containing h1 and h2
      */
-    public static <T> FibonacciHeap<T> union(
-        FibonacciHeap<T> h1,
-        FibonacciHeap<T> h2)
+    public static <T> FibonacciHeap2<T> union(
+        FibonacciHeap2<T> h1,
+        FibonacciHeap2<T> h2)
     {
-        FibonacciHeap<T> h = new FibonacciHeap<T>();
+        FibonacciHeap2<T> h = new FibonacciHeap2<T>();
 
         if ((h1 != null) && (h2 != null)) {
             h.minNode = h1.minNode;
