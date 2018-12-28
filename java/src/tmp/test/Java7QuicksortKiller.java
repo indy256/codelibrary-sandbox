@@ -22,7 +22,7 @@ import java.util.Random;
  */
 public class Java7QuicksortKiller implements Runnable {
 
-    private final Random rnd = new Random(239);
+    private final Random rnd = new Random(8767);
 
     private final int INSERTION_SORT_THRESHOLD = 47;
 //    private final int MAX_RUN_LENGTH = 33;
@@ -44,11 +44,6 @@ public class Java7QuicksortKiller implements Runnable {
             randomShuffle(a, left, right); // why not?
 
             if (leftmost) {
-                /*
-                 * Traditional (without sentinel) insertion sort,
-                 * optimized for server VM, is used in case of
-                 * the leftmost part.
-                 */
                 for (int i = left, j = i; i < right; j = ++i) {
                     int ai = a[i + 1];
                     int pi = p[i + 1];
@@ -63,23 +58,11 @@ public class Java7QuicksortKiller implements Runnable {
                     p[j + 1] = pi;
                 }
             } else {
-                /*
-                 * Skip the longest ascending sequence.
-                 */
                 do {
                     if (left >= right) {
                         return;
                     }
                 } while (a[++left] >= a[left - 1]);
-
-                /*
-                 * Every element from adjoining part plays the role
-                 * of sentinel, therefore this allows us to avoid the
-                 * left range check on each iteration. Moreover, we use
-                 * the more optimized algorithm, so called pair insertion
-                 * sort, which is faster (in the context of Quicksort)
-                 * than traditional implementation of insertion sort.
-                 */
                 for (int k = left; ++left <= right; k = ++left) {
                     int a1 = a[k], a2 = a[left];
                     int p1 = p[k], p2 = p[left];
@@ -115,18 +98,8 @@ public class Java7QuicksortKiller implements Runnable {
             }
             return;
         }
-
-        // Inexpensive approximation of length / 7
         int seventh = (length >> 3) + (length >> 6) + 1;
-
-        /*
-         * Sort five evenly spaced elements around (and including) the
-         * center element in the range. These elements will be used for
-         * pivot selection as described below. The choice for spacing
-         * these elements was empirically determined to work well on
-         * a wide variety of inputs.
-         */
-        int e3 = (left + right) >>> 1; // The midpoint
+        int e3 = (left + right) >>> 1;
         int e2 = e3 - seventh;
         int e1 = e2 - seventh;
         int e4 = e3 + seventh;
@@ -137,8 +110,6 @@ public class Java7QuicksortKiller implements Runnable {
 
         if (a[e1] == NO_VALUE) a[e1] = MAX_VALUE--;
         if (a[e2] == NO_VALUE) a[e2] = MAX_VALUE--;
-
-        // Sort these elements using insertion sort
         if (less(a[e2], a[e1])) { int t = a[e2]; a[e2] = a[e1]; a[e1] = t;
             int s = p[e2]; p[e2] = p[e1]; p[e1] = s; }
 
@@ -167,151 +138,64 @@ public class Java7QuicksortKiller implements Runnable {
             }
         }
 
-        // Pointers
-        int less  = left;  // The index of the first element of center part
-        int great = right; // The index before the first element of right part
-
+        int less  = left;
+        int great = right;
         if (a[e1] != a[e2] && a[e2] != a[e3] && a[e3] != a[e4] && a[e4] != a[e5]) {
-            /*
-             * Use the second and fourth of the five sorted elements as pivots.
-             * These values are inexpensive approximations of the first and
-             * second terciles of the array. Note that pivot1 <= pivot2.
-             */
             int pivot1 = a[e2];
             int pivot2 = a[e4];
             int ppivot1 = p[e2];
             int ppivot2 = p[e4];
-
-            /*
-             * The first and the last elements to be sorted are moved to the
-             * locations formerly occupied by the pivots. When partitioning
-             * is complete, the pivots are swapped back into their final
-             * positions, and excluded from subsequent sorting.
-             */
             a[e2] = a[left];
             a[e4] = a[right];
             p[e2] = p[left];
             p[e4] = p[right];
-
-            /*
-             * Skip elements, which are less or greater than pivot values.
-             */
-            //while (a[++less] < pivot1);
-            //while (a[--great] > pivot2);
             while (less(a[++less], pivot1));
             while (greater(a[--great], pivot2));
-
-            /*
-             * Partitioning:
-             *
-             *   left part           center part                   right part
-             * +--------------------------------------------------------------+
-             * |  < pivot1  |  pivot1 <= && <= pivot2  |    ?    |  > pivot2  |
-             * +--------------------------------------------------------------+
-             *               ^                          ^       ^
-             *               |                          |       |
-             *              less                        k     great
-             *
-             * Invariants:
-             *
-             *              all in (left, less)   < pivot1
-             *    pivot1 <= all in [less, k)     <= pivot2
-             *              all in (great, right) > pivot2
-             *
-             * Pointer k is the first index of ?-part.
-             */
             outer:
             for (int k = less - 1; ++k <= great; ) {
                 int ak = a[k];
                 int pk = p[k];
-                //if (ak < pivot1) { // Move a[k] to left part
-                if (less(ak, pivot1)) { // Move a[k] to left part
+                if (less(ak, pivot1)) {
                     a[k] = a[less];
                     p[k] = p[less];
-                    /*
-                     * Here and below we use "a[i] = b; i++;" instead
-                     * of "a[i++] = b;" due to performance issue.
-                     */
                     a[less] = ak;
                     p[less] = pk;
                     ++less;
-                    //} else if (ak > pivot2) { // Move a[k] to right part
-                } else if (greater(ak, pivot2)) { // Move a[k] to right part
-                    //while (a[great] > pivot2) {
+                } else if (greater(ak, pivot2)) {
                     while (greater(a[great], pivot2)) {
                         if (great-- == k) {
                             break outer;
                         }
                     }
-                    //if (a[great] < pivot1) { // a[great] <= pivot2
-                    if (less(a[great], pivot1)) { // a[great] <= pivot2
+                    if (less(a[great], pivot1)) {
                         a[k] = a[less];
                         p[k] = p[less];
                         a[less] = a[great];
                         p[less] = p[great];
                         ++less;
-                    } else { // pivot1 <= a[great] <= pivot2
+                    } else {
                         a[k] = a[great];
                         p[k] = p[great];
                     }
-                    /*
-                     * Here and below we use "a[i] = b; i--;" instead
-                     * of "a[i--] = b;" due to performance issue.
-                     */
                     a[great] = ak;
                     p[great] = pk;
                     --great;
                 }
             }
-
-            // Swap pivots into their final positions
             a[left]  = a[less  - 1]; a[less  - 1] = pivot1;
             a[right] = a[great + 1]; a[great + 1] = pivot2;
             p[left]  = p[less  - 1]; p[less  - 1] = ppivot1;
             p[right] = p[great + 1]; p[great + 1] = ppivot2;
-
-
-            // Sort left and right parts recursively, excluding known pivots
             hackedSort(a, p, left, less - 2, leftmost);
             hackedSort(a, p, great + 2, right, false);
-
-            /*
-             * If center part is too large (comprises > 4/7 of the array),
-             * swap internal pivot values to ends.
-             */
             if (less < e1 && e5 < great) {
-                /*
-                 * Skip elements, which are equal to pivot values.
-                 */
                 while (a[less] == pivot1) {
                     throw new RuntimeException("We should not enter here!");
-//                    ++less;
                 }
 
                 while (a[great] == pivot2) {
                     throw new RuntimeException("We should not enter here!");
-//                    --great;
                 }
-
-                /*
-                 * Partitioning:
-                 *
-                 *   left part         center part                  right part
-                 * +----------------------------------------------------------+
-                 * | == pivot1 |  pivot1 < && < pivot2  |    ?    | == pivot2 |
-                 * +----------------------------------------------------------+
-                 *              ^                        ^       ^
-                 *              |                        |       |
-                 *             less                      k     great
-                 *
-                 * Invariants:
-                 *
-                 *              all in (*,  less) == pivot1
-                 *     pivot1 < all in [less,  k)  < pivot2
-                 *              all in (great, *) == pivot2
-                 *
-                 * Pointer k is the first index of ?-part.
-                 */
                 outer:
                 for (int k = less - 1; ++k <= great; ) {
                     int ak = a[k];
@@ -328,21 +212,13 @@ public class Java7QuicksortKiller implements Runnable {
                                 break outer;
                             }
                         }
-                        if (a[great] == pivot1) { // a[great] < pivot2
+                        if (a[great] == pivot1) {
                             a[k] = a[less];
                             p[k] = p[less];
-                            /*
-                             * Even though a[great] equals to pivot1, the
-                             * assignment a[less] = pivot1 may be incorrect,
-                             * if a[great] and pivot1 are floating-point zeros
-                             * of different signs. Therefore in float and
-                             * double sorting methods we have to use more
-                             * accurate assignment a[less] = a[great].
-                             */
                             a[less] = pivot1;
                             p[less] = ppivot1;
                             ++less;
-                        } else { // pivot1 < a[great] < pivot2
+                        } else {
                             a[k] = a[great];
                             p[k] = p[great];
                         }
@@ -352,86 +228,10 @@ public class Java7QuicksortKiller implements Runnable {
                     }
                 }
             }
-
-            // Sort center part recursively
             hackedSort(a, p, less, great, false);
 
-        } else { // Partitioning with one pivot
+        } else {
             throw new RuntimeException("We should not enter here!");
-//            /*
-//             * Use the third of the five sorted elements as pivot.
-//             * This value is inexpensive approximation of the median.
-//             */
-//            int pivot = a[e3];
-//            int ppivot = p[e3];
-//
-//            /*
-//             * Partitioning degenerates to the traditional 3-way
-//             * (or "Dutch National Flag") schema:
-//             *
-//             *   left part    center part              right part
-//             * +-------------------------------------------------+
-//             * |  < pivot  |   == pivot   |     ?    |  > pivot  |
-//             * +-------------------------------------------------+
-//             *              ^              ^        ^
-//             *              |              |        |
-//             *             less            k      great
-//             *
-//             * Invariants:
-//             *
-//             *   all in (left, less)   < pivot
-//             *   all in [less, k)     == pivot
-//             *   all in (great, right) > pivot
-//             *
-//             * Pointer k is the first index of ?-part.
-//             */
-//            for (int k = less; k <= great; ++k) {
-//                if (a[k] == pivot) {
-//                    continue;
-//                }
-//                int ak = a[k];
-//                int pk = p[k];
-//                if (less(ak, pivot)) { // Move a[k] to left part
-//                    a[k] = a[less];
-//                    p[k] = p[less];
-//                    a[less] = ak;
-//                    p[less] = pk;
-//                    ++less;
-//                } else { // a[k] > pivot - Move a[k] to right part
-//                    while (greater(a[great], pivot)) {
-//                        --great;
-//                    }
-//                    if (less(a[great], pivot)) { // a[great] <= pivot
-//                        a[k] = a[less];
-//                        p[k] = p[less];
-//                        a[less] = a[great];
-//                        p[less] = p[great];
-//                        ++less;
-//                    } else { // a[great] == pivot
-//                        /*
-//                         * Even though a[great] equals to pivot, the
-//                         * assignment a[k] = pivot may be incorrect,
-//                         * if a[great] and pivot are floating-point
-//                         * zeros of different signs. Therefore in float
-//                         * and double sorting methods we have to use
-//                         * more accurate assignment a[k] = a[great].
-//                         */
-//                        a[k] = pivot;
-//                        p[k] = ppivot;
-//                    }
-//                    a[great] = ak;
-//                    p[great] = pk;
-//                    --great;
-//                }
-//            }
-//
-//            /*
-//             * Sort left and right parts recursively.
-//             * All elements from center part are equal
-//             * and, therefore, already sorted.
-//             */
-//            hackedSort(a, p, left, less - 1, leftmost, depth + 1);
-//            hackedSort(a, p, great + 1, right, false, depth + 1);
         }
     }
 
@@ -475,7 +275,7 @@ public class Java7QuicksortKiller implements Runnable {
     }
 
     public void run() {
-        int n = 100_000;
+        int n = 200_000;
 
         int[] a = new int[n];
         int[] p = new int[n];
@@ -487,12 +287,12 @@ public class Java7QuicksortKiller implements Runnable {
         MIN_VALUE = 1;
         MAX_VALUE = n;
 
-        long t1, t2;
+        //long t1, t2;
 
-        t1 = System.currentTimeMillis();
+        //t1 = System.currentTimeMillis();
         hackedSort(a, p, 0, n-1, true);
-        t2 = System.currentTimeMillis();
-        System.out.println("Generation time = " + (t2 - t1) + " ms.");
+        //t2 = System.currentTimeMillis();
+        //System.out.println("Generation time = " + (t2 - t1) + " ms.");
 
         checkValues(a, 1, n);
         checkValues(p, 0, n-1);
@@ -507,10 +307,11 @@ public class Java7QuicksortKiller implements Runnable {
         }
         */
 
-        t1 = System.currentTimeMillis();
-        Arrays.sort(a.clone());
-        t2 = System.currentTimeMillis();
-        System.out.println("Sorting time = " + (t2 - t1) + " ms.");
+        //t1 = System.currentTimeMillis();
+        //Arrays.sort(a.clone());
+        //t2 = System.currentTimeMillis();
+        //System.out.println("Sorting time = " + (t2 - t1) + " ms.");
+        printArray(a, new PrintWriter(System.out));
     }
 
     private void applyPermutation(int[] a, int[] pos) {
