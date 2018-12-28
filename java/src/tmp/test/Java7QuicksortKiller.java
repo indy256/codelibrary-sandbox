@@ -255,10 +255,7 @@ public class Java7QuicksortKiller implements Runnable {
         if (a == NO_VALUE) {
             return b > MAX_VALUE;
         }
-        if (b == NO_VALUE) {
-            return a < MIN_VALUE;
-        }
-        throw new RuntimeException("We should not enter here!");
+        return a < MIN_VALUE;
     }
 
     private boolean greater(int a, int b) {
@@ -268,14 +265,11 @@ public class Java7QuicksortKiller implements Runnable {
         if (a == NO_VALUE) {
             return b < MIN_VALUE;
         }
-        if (b == NO_VALUE) {
-            return a > MAX_VALUE;
-        }
-        throw new RuntimeException("We should not enter here!");
+        return a > MAX_VALUE;
     }
 
     public void run() {
-        int n = 200_000;
+        int n = 60_000;
 
         int[] a = new int[n];
         int[] p = new int[n];
@@ -287,12 +281,11 @@ public class Java7QuicksortKiller implements Runnable {
         MIN_VALUE = 1;
         MAX_VALUE = n;
 
-        //long t1, t2;
-
-        //t1 = System.currentTimeMillis();
+//        long t1, t2;
+//        t1 = System.currentTimeMillis();
         hackedSort(a, p, 0, n-1, true);
-        //t2 = System.currentTimeMillis();
-        //System.out.println("Generation time = " + (t2 - t1) + " ms.");
+//        t2 = System.currentTimeMillis();
+//        System.out.println("Generation time = " + (t2 - t1) + " ms.");
 
         checkValues(a, 1, n);
         checkValues(p, 0, n-1);
