@@ -1,24 +1,25 @@
-package tmp.test;
-
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 
 /**
  * Generator which creates a test where Java 7 dual-pivot quicksort algorithm runs in O(n^2) time.
- *
+ * <p>
  * Number of operations is not the best possible:
  * maximal recursion depth is about n^2 / 5 while best possible result is n^2 / 4.
- *
+ * <p>
  * It's because Java 7 checks if array is nearly sorted.
  * If it is, a strange algorithm with something called 'runs' is used.
  * In our case it is not, but in process of this checking Java 7 swaps some elements.
  * I didn't figure out how to maintain these swaps yet. Feel free to improve it!
  *
  * @author Alexey Dergunov
- * @since  1.7
+ * @since 1.7
  */
 public class Java7QuicksortKiller implements Runnable {
 
@@ -29,11 +30,13 @@ public class Java7QuicksortKiller implements Runnable {
 //    private final int QUICKSORT_THRESHOLD = 286;
 //    private final int MAX_RUN_COUNT = 67;
 
-    private int MIN_VALUE;
-    private int MAX_VALUE;
-    private final int NO_VALUE = -1;
+    private static int MIN_VALUE;
+    private static int MAX_VALUE;
+    private static final int NO_VALUE = -1;
+    private static int[] a;
+    private static int[] p;
 
-    private void hackedSort(int[] a, int[] p, int left, int right, boolean leftmost) {
+    private void hackedSort(int left, int right, boolean leftmost) {
         int length = right - left + 1;
 
         // Use insertion sort on tiny arrays
@@ -68,8 +71,10 @@ public class Java7QuicksortKiller implements Runnable {
                     int p1 = p[k], p2 = p[left];
 
                     if (a1 < a2) {
-                        a2 = a1; a1 = a[left];
-                        p2 = p1; p1 = p[left];
+                        a2 = a1;
+                        a1 = a[left];
+                        p2 = p1;
+                        p1 = p[left];
                     }
                     while (a1 < a[--k]) {
                         a[k + 2] = a[k];
@@ -110,35 +115,77 @@ public class Java7QuicksortKiller implements Runnable {
 
         if (a[e1] == NO_VALUE) a[e1] = MAX_VALUE--;
         if (a[e2] == NO_VALUE) a[e2] = MAX_VALUE--;
-        if (less(a[e2], a[e1])) { int t = a[e2]; a[e2] = a[e1]; a[e1] = t;
-            int s = p[e2]; p[e2] = p[e1]; p[e1] = s; }
-
-        if (less(a[e3], a[e2])) { int t = a[e3]; a[e3] = a[e2]; a[e2] = t;
-            int s = p[e3]; p[e3] = p[e2]; p[e2] = s;
-            if (less(t, a[e1])) { a[e2] = a[e1]; a[e1] = t;
-                p[e2] = p[e1]; p[e1] = s; }
+        if (LESS(a[e2], a[e1])) {
+            int t = a[e2];
+            a[e2] = a[e1];
+            a[e1] = t;
+            int s = p[e2];
+            p[e2] = p[e1];
+            p[e1] = s;
         }
-        if (less(a[e4], a[e3])) { int t = a[e4]; a[e4] = a[e3]; a[e3] = t;
-            int s = p[e4]; p[e4] = p[e3]; p[e3] = s;
-            if (less(t, a[e2])) { a[e3] = a[e2]; a[e2] = t;
-                p[e3] = p[e2]; p[e2] = s;
-                if (less(t, a[e1])) { a[e2] = a[e1]; a[e1] = t;
-                    p[e2] = p[e1]; p[e1] = s; }
+
+        if (LESS(a[e3], a[e2])) {
+            int t = a[e3];
+            a[e3] = a[e2];
+            a[e2] = t;
+            int s = p[e3];
+            p[e3] = p[e2];
+            p[e2] = s;
+            if (LESS(t, a[e1])) {
+                a[e2] = a[e1];
+                a[e1] = t;
+                p[e2] = p[e1];
+                p[e1] = s;
             }
         }
-        if (less(a[e5], a[e4])) { int t = a[e5]; a[e5] = a[e4]; a[e4] = t;
-            int s = p[e5]; p[e5] = p[e4]; p[e4] = s;
-            if (less(t, a[e3])) { a[e4] = a[e3]; a[e3] = t;
-                p[e4] = p[e3]; p[e3] = s;
-                if (less(t, a[e2])) { a[e3] = a[e2]; a[e2] = t;
-                    p[e3] = p[e2]; p[e2] = s;
-                    if (less(t, a[e1])) { a[e2] = a[e1]; a[e1] = t;
-                        p[e2] = p[e1]; p[e1] = s; }
+        if (LESS(a[e4], a[e3])) {
+            int t = a[e4];
+            a[e4] = a[e3];
+            a[e3] = t;
+            int s = p[e4];
+            p[e4] = p[e3];
+            p[e3] = s;
+            if (LESS(t, a[e2])) {
+                a[e3] = a[e2];
+                a[e2] = t;
+                p[e3] = p[e2];
+                p[e2] = s;
+                if (LESS(t, a[e1])) {
+                    a[e2] = a[e1];
+                    a[e1] = t;
+                    p[e2] = p[e1];
+                    p[e1] = s;
+                }
+            }
+        }
+        if (LESS(a[e5], a[e4])) {
+            int t = a[e5];
+            a[e5] = a[e4];
+            a[e4] = t;
+            int s = p[e5];
+            p[e5] = p[e4];
+            p[e4] = s;
+            if (LESS(t, a[e3])) {
+                a[e4] = a[e3];
+                a[e3] = t;
+                p[e4] = p[e3];
+                p[e3] = s;
+                if (LESS(t, a[e2])) {
+                    a[e3] = a[e2];
+                    a[e2] = t;
+                    p[e3] = p[e2];
+                    p[e2] = s;
+                    if (LESS(t, a[e1])) {
+                        a[e2] = a[e1];
+                        a[e1] = t;
+                        p[e2] = p[e1];
+                        p[e1] = s;
+                    }
                 }
             }
         }
 
-        int less  = left;
+        int less = left;
         int great = right;
         if (a[e1] != a[e2] && a[e2] != a[e3] && a[e3] != a[e4] && a[e4] != a[e5]) {
             int pivot1 = a[e2];
@@ -149,25 +196,25 @@ public class Java7QuicksortKiller implements Runnable {
             a[e4] = a[right];
             p[e2] = p[left];
             p[e4] = p[right];
-            while (less(a[++less], pivot1));
-            while (greater(a[--great], pivot2));
+            while (LESS(a[++less], pivot1)) ;
+            while (GREATER(a[--great], pivot2)) ;
             outer:
             for (int k = less - 1; ++k <= great; ) {
                 int ak = a[k];
                 int pk = p[k];
-                if (less(ak, pivot1)) {
+                if (LESS(ak, pivot1)) {
                     a[k] = a[less];
                     p[k] = p[less];
                     a[less] = ak;
                     p[less] = pk;
                     ++less;
-                } else if (greater(ak, pivot2)) {
-                    while (greater(a[great], pivot2)) {
+                } else if (GREATER(ak, pivot2)) {
+                    while (GREATER(a[great], pivot2)) {
                         if (great-- == k) {
                             break outer;
                         }
                     }
-                    if (less(a[great], pivot1)) {
+                    if (LESS(a[great], pivot1)) {
                         a[k] = a[less];
                         p[k] = p[less];
                         a[less] = a[great];
@@ -182,12 +229,16 @@ public class Java7QuicksortKiller implements Runnable {
                     --great;
                 }
             }
-            a[left]  = a[less  - 1]; a[less  - 1] = pivot1;
-            a[right] = a[great + 1]; a[great + 1] = pivot2;
-            p[left]  = p[less  - 1]; p[less  - 1] = ppivot1;
-            p[right] = p[great + 1]; p[great + 1] = ppivot2;
-            hackedSort(a, p, left, less - 2, leftmost);
-            hackedSort(a, p, great + 2, right, false);
+            a[left] = a[less - 1];
+            a[less - 1] = pivot1;
+            a[right] = a[great + 1];
+            a[great + 1] = pivot2;
+            p[left] = p[less - 1];
+            p[less - 1] = ppivot1;
+            p[right] = p[great + 1];
+            p[great + 1] = ppivot2;
+            hackedSort(left, less - 2, leftmost);
+            hackedSort(great + 2, right, false);
             if (less < e1 && e5 < great) {
                 while (a[less] == pivot1) {
                     throw new RuntimeException("We should not enter here!");
@@ -228,7 +279,7 @@ public class Java7QuicksortKiller implements Runnable {
                     }
                 }
             }
-            hackedSort(a, p, less, great, false);
+            hackedSort(less, great, false);
 
         } else {
             throw new RuntimeException("We should not enter here!");
@@ -248,7 +299,7 @@ public class Java7QuicksortKiller implements Runnable {
         a[j] = t;
     }
 
-    private boolean less(int a, int b) {
+    private boolean LESS(int a, int b) {
         if (a != NO_VALUE && b != NO_VALUE) {
             return a < b;
         }
@@ -258,7 +309,7 @@ public class Java7QuicksortKiller implements Runnable {
         return a < MIN_VALUE;
     }
 
-    private boolean greater(int a, int b) {
+    private boolean GREATER(int a, int b) {
         if (a != NO_VALUE && b != NO_VALUE) {
             return a > b;
         }
@@ -269,10 +320,10 @@ public class Java7QuicksortKiller implements Runnable {
     }
 
     public void run() {
-        int n = 100_000;
+        int n = 75_000;
 
-        int[] a = new int[n];
-        int[] p = new int[n];
+        a = new int[n];
+        p = new int[n];
 
         for (int i = 0; i < n; i++) {
             a[i] = NO_VALUE;
@@ -283,12 +334,12 @@ public class Java7QuicksortKiller implements Runnable {
 
 //        long t1, t2;
 //        t1 = System.currentTimeMillis();
-        hackedSort(a, p, 0, n-1, true);
+        hackedSort(0, n - 1, true);
 //        t2 = System.currentTimeMillis();
 //        System.out.println("Generation time = " + (t2 - t1) + " ms.");
 
-        checkValues(a, 1, n);
-        checkValues(p, 0, n-1);
+//        checkValues(a, 1, n);
+//        checkValues(p, 0, n - 1);
 
         applyPermutation(a, p);
 
@@ -300,10 +351,10 @@ public class Java7QuicksortKiller implements Runnable {
         }
         */
 
-        //t1 = System.currentTimeMillis();
-        //Arrays.sort(a.clone());
-        //t2 = System.currentTimeMillis();
-        //System.out.println("Sorting time = " + (t2 - t1) + " ms.");
+//        t1 = System.currentTimeMillis();
+//        Arrays.sort(a.clone());
+//        t2 = System.currentTimeMillis();
+//        System.out.println("Sorting time = " + (t2 - t1) + " ms.");
         printArray(a, new PrintWriter(System.out));
     }
 
@@ -334,13 +385,13 @@ public class Java7QuicksortKiller implements Runnable {
         pw.println(n);
         for (int i = 0; i < n; i++) {
             pw.print(a[i]);
-            if (i == n-1) pw.println(); else pw.print(' ');
+            if (i == n - 1) pw.println();
+            else pw.print(' ');
         }
         pw.close();
     }
 
-    public static void main(String[] args) {
-        new Thread(null, new Java7QuicksortKiller(), "", 128*1024*1024).start();
+    public static void main(String[] args) throws IOException {
+        new Thread(null, new Java7QuicksortKiller(), "", 16 * 1024 * 1024).start();
     }
-
 }
