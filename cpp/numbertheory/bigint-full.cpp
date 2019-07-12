@@ -136,6 +136,32 @@ struct bigint {
         return make_pair(q, r / norm);
     }
 
+    // experimental div via Newton's method
+    static pair<bigint, bigint> divmod2(const bigint &a, const bigint &b) {
+        if (a < b)
+            return {0, a};
+        int n = 2 * max(a.z.size(), b.z.size());
+        bigint two = 2;
+        two.z.insert(two.z.begin(), n, 0);
+        bigint x = 3;
+        x.z.insert(x.z.begin(), n - b.z.size() - 1, 0);
+
+        // x[i+1] = x[i] * (2 - x[i] * b)
+        for (int i = 0;; ++i) {
+            bigint nx = x * (two - x * b);
+            nx.z.erase(nx.z.begin(), nx.z.begin() + min((int) nx.z.size(), n));
+            if (x == nx)
+                break;
+            x = nx;
+        }
+
+        bigint q = a * x;
+        q.z.erase(q.z.begin(), q.z.begin() + min((int) q.z.size(), n));
+
+        bigint r = a - b * q;
+        return r < b ? make_pair(q, r) : make_pair(q + 1, r - b);
+    }
+
     bigint operator/(const bigint &v) const {
         return divmod(*this, v).first;
     }
